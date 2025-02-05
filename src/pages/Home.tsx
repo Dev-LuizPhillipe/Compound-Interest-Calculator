@@ -1,12 +1,13 @@
 import React from "react";
 import Button from "../components/ButtonPage/button";
 import Header from "../components/Header/header";
+import InputBox from "../components/InputBox/InputBox";
 
 export default function Home() {
   return (
-    <div className="container">
+    <div className="containerHome">
       <Header />
-      {/* <div className="content">
+      <div className="contentHome">
         <h1>Valor Inicial:</h1>
         <InputBox />
         <h1>Investimento mensal:-</h1>
@@ -22,7 +23,7 @@ export default function Home() {
           backgroundColor={"#32e875"}
           onClick={() => console.log("Calculando...")}
         />
-      </div> */}
+      </div>
     </div>
   );
 }

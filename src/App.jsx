@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="container">
-      <div className="calculator">
+      <div className="content">
         <h1 className="title">
           CALCULADORA DE <br />
           JUROS COMPOSTOS
