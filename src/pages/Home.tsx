@@ -8,14 +8,22 @@ export default function Home() {
     <div className="containerHome">
       <Header />
       <div className="contentHome">
-        <h1>Valor Inicial:</h1>
-        <InputBox />
-        <h1>Investimento mensal:-</h1>
-        <InputBox />
-        <h1>Taxa de juros:</h1>
-        <InputBox />
-        <h1>Período:</h1>
-        <InputBox />
+        <div>
+          <h1>Valor Inicial:</h1>
+          <InputBox />
+        </div>
+        <div>
+          <h1>Investimento mensal:</h1>
+          <InputBox />
+        </div>
+        <div>
+          <h1>Taxa de juros:</h1>
+          <InputBox />
+        </div>
+        <div>
+          <h1>Período:</h1>
+          <InputBox />
+        </div>
       </div>
       <div>
         <Button
