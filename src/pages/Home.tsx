@@ -6,34 +6,44 @@ import InputBox from "../components/InputBox/InputBox";
 function Home() {
   //state to store the values of the inputs
   const [state, setState] = useState({
-    initialValue: 0,
-    initialInvestment: 0,
-    interestRate: 0,
-    periodMonths: 0,
+    initialValue: "",
+    interestRate: "",
+    periodMonths: "",
+    resultIsVisible: false,
   });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setState({
-      ...state,
-      [name]: Number(value),
-    });
-  };
+  const [total, setTotal] = useState<number | null>(null);
 
   const handleCalculateInterest = (
     initialValue: number,
-    monthlyInvestment: number,
     interestRate: number,
     periodMonths: number
   ): number => {
-    const result =
-      initialValue * 1 +
-      interestRate / 10 ** periodMonths +
-      monthlyInvestment *
-        ((1 + interestRate ** periodMonths - 1) / interestRate);
-
+    return initialValue * (1 + interestRate / 100) ** periodMonths;
+  };
+  //function to handle the click event, return the result of calculation
+  const handleClick = () => {
+    const { initialValue, interestRate, periodMonths } = state;
+    if (!initialValue || !interestRate || !periodMonths) {
+      alert("Preencha todos os campos!");
+      return;
+    }
+    const result = handleCalculateInterest(
+      Number(state.initialValue),
+      Number(state.interestRate),
+      Number(state.periodMonths)
+    );
+    setTotal(result);
+    setState((prev) => ({ ...prev, resultIsVisible: true }));
     console.log(result);
-    return result;
+  };
+
+  //function to handle the change event, update the state with the value of the input
+  const handleOnChange = (e) =>
+    setState((prev) => ({ ...prev, [e.target.name]: Number(e.target.value) }));
+
+  //function to format the value to BRL
+  const handleFormatValue = (value: number) => {
+    return `R$ ${value.toFixed(2)}`;
   };
 
   return (
@@ -45,26 +55,32 @@ function Home() {
           <InputBox
             icon={"R$"}
             placeholder="Digite o valor inicial"
+            type="number"
             value={state.initialValue}
-            onChange={handleInputChange}
+            onChange={handleOnChange}
+            name="initialValue"
           />
         </div>
-        <div>
+        {/* <div>
           <h1>Investimento mensal:</h1>
           <InputBox
             icon={"R$"}
             placeholder="Digite o investimento"
-            value={state.initialInvestment}
-            onChange={handleInputChange}
+            type="number"
+            value={state.monthlyInvestment}
+            onChange={handleOnChange}
+            name="monthlyInvestment"
           />
-        </div>
+        </div> */}
         <div>
           <h1>Taxa de juros:</h1>
           <InputBox
             icon={"%"}
             placeholder="Digite a taxa de juros"
+            type="number"
             value={state.interestRate}
-            onChange={handleInputChange}
+            onChange={handleOnChange}
+            name="interestRate"
           />
         </div>
         <div>
@@ -72,21 +88,23 @@ function Home() {
           <InputBox
             icon={"#"}
             placeholder="Digite o período"
+            type="number"
             value={state.periodMonths}
-            onChange={handleInputChange}
+            onChange={handleOnChange}
+            name="periodMonths"
           />
         </div>
       </div>
-      W
       <div>
         <Button
           color={"#040f0f"}
           backgroundColor={"#32e875"}
-          onClick={handleCalculateInterest}
+          onClick={handleClick}
         />
-        <p>Valor total investido: {state.initialValue}</p>
-        <p>valor total acumulado: {state.initialValue}</p>
-        <p>valor total taxas: {state.initialValue}</p>
+        <p>Valor total investido: {total ? handleFormatValue(total) : ""}</p>
+        {/* <p>Valor total investido: {state.initialValue}</p>
+        <p>valor total acumulado: {state.interestRate}</p>
+        <p>valor total taxas: {state.periodMonths}</p> */}
       </div>
     </div>
   );

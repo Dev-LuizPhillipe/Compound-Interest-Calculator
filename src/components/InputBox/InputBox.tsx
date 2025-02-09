@@ -1,7 +1,25 @@
 import React from "react";
 import "./InputBox.css";
 
-function InputBox({ icon, placeholder, value, onChange }) {
+interface InputBoxProps {
+  icon: string;
+  placeholder: string;
+  value?: any;
+  onChange?: any;
+  onclick?: any;
+  type?: string;
+  name?: string;
+}
+
+function InputBox({
+  icon,
+  placeholder,
+  value,
+  onChange,
+  onclick,
+  type,
+  name,
+}: InputBoxProps) {
   return (
     <div className="input-box">
       <div className="input-box-side">
@@ -9,11 +27,13 @@ function InputBox({ icon, placeholder, value, onChange }) {
       </div>
       <form className="form-box">
         <input
-          type="number"
+          type={type}
           className="input-form"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onClick={onclick}
+          name={name}
         />
       </form>
     </div>
