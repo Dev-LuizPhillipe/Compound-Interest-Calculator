@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "../components/ButtonPage/button";
 import Header from "../components/Header/header";
 import InputBox from "../components/InputBox/InputBox";
+import ResultTable from "../components/ResultTable/ResultTable";
 
 function Home() {
   //state to store the values of the inputs
@@ -9,41 +10,75 @@ function Home() {
     initialValue: "",
     interestRate: "",
     periodMonths: "",
+    monthlyInvestment: "",
     resultIsVisible: false,
   });
-  const [total, setTotal] = useState<number | null>(null);
+  const [data, setData] = useState<
+    {
+      month: number;
+      totalInvested: number;
+      accumulatedInterest: number;
+      totalAccumulated: number;
+    }[]
+  >([]);
 
   const handleCalculateInterest = (
     initialValue: number,
     interestRate: number,
+    monthlyInvestment: number,
     periodMonths: number
-  ): number => {
-    return initialValue * (1 + interestRate / 100) ** periodMonths;
+  ): { data: any[] } => {
+    const monthlyRate = interestRate / 100;
+    let accumulated = initialValue;
+    let totalInvested = initialValue;
+    const calculatedData: {
+      month: number;
+      totalInvested: number;
+      accumulatedInterest: number;
+      totalAccumulated: number;
+    }[] = [];
+
+    for (let month = 1; month <= periodMonths; month++) {
+      accumulated = accumulated * (1 + monthlyRate) + monthlyInvestment;
+      totalInvested += monthlyInvestment;
+      const interestGained = accumulated - totalInvested;
+
+      calculatedData.push({
+        month,
+        totalInvested: totalInvested,
+        accumulatedInterest: interestGained,
+        totalAccumulated: accumulated,
+      });
+    }
+
+    return { data: calculatedData };
   };
   //function to handle the click event, return the result of calculation
   const handleClick = () => {
-    const { initialValue, interestRate, periodMonths } = state;
+    const { initialValue, interestRate, periodMonths, monthlyInvestment } =
+      state;
     if (!initialValue || !interestRate || !periodMonths) {
       alert("Preencha todos os campos!");
       return;
     }
-    const result = handleCalculateInterest(
+    const { data } = handleCalculateInterest(
       Number(state.initialValue),
       Number(state.interestRate),
+      Number(state.monthlyInvestment),
       Number(state.periodMonths)
     );
-    setTotal(result);
+    setData(data);
     setState((prev) => ({ ...prev, resultIsVisible: true }));
-    console.log(result);
   };
 
   //function to handle the change event, update the state with the value of the input
-  const handleOnChange = (e) =>
-    setState((prev) => ({ ...prev, [e.target.name]: Number(e.target.value) }));
-
-  //function to format the value to BRL
-  const handleFormatValue = (value: number) => {
-    return `R$ ${value.toFixed(2)}`;
+  const handleOnChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setState((prev) => ({
+      ...prev,
+      [name]: value === "" ? "" : Number(value),
+    }));
   };
 
   return (
@@ -61,7 +96,7 @@ function Home() {
             name="initialValue"
           />
         </div>
-        {/* <div>
+        <div>
           <h1>Investimento mensal:</h1>
           <InputBox
             icon={"R$"}
@@ -71,11 +106,11 @@ function Home() {
             onChange={handleOnChange}
             name="monthlyInvestment"
           />
-        </div> */}
+        </div>
         <div>
           <h1>Taxa de juros:</h1>
           <InputBox
-            icon={"%"}
+            icon={" %"}
             placeholder="Digite a taxa de juros"
             type="number"
             value={state.interestRate}
@@ -84,9 +119,9 @@ function Home() {
           />
         </div>
         <div>
-          <h1>Período:</h1>
+          <h1>Período(Meses):</h1>
           <InputBox
-            icon={"#"}
+            icon={" #"}
             placeholder="Digite o período"
             type="number"
             value={state.periodMonths}
@@ -95,17 +130,18 @@ function Home() {
           />
         </div>
       </div>
-      <div>
+      <div style={{ marginBottom: "10px" }}>
         <Button
           color={"#040f0f"}
           backgroundColor={"#32e875"}
           onClick={handleClick}
         />
-        <p>Valor total investido: {total ? handleFormatValue(total) : ""}</p>
-        {/* <p>Valor total investido: {state.initialValue}</p>
-        <p>valor total acumulado: {state.interestRate}</p>
-        <p>valor total taxas: {state.periodMonths}</p> */}
       </div>
+      {state.resultIsVisible && (
+        <>
+          <ResultTable data={data} />
+        </>
+      )}
     </div>
   );
 }
