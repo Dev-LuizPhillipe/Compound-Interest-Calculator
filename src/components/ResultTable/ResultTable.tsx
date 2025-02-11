@@ -1,5 +1,5 @@
 import React from "react";
-
+//component to render the result calculated
 interface TableProps {
   data: {
     month: number;
@@ -17,7 +17,7 @@ function ResultTable({ data }: TableProps) {
     });
 
   return (
-    <div className="table-responsive">
+    <div className="table-responsive" style={{ margin: "20px" }}>
       <table className="table table-striped table-hover table-bordered text-center mt-4 table-dark">
         <thead>
           <tr>

@@ -55,4 +55,7 @@ input::-webkit-outer-spin-button {
   .input-form {
     font-size: 14px;
   }
+  .input-form::placeholder {
+    font-size: 10px;
+  }
 }

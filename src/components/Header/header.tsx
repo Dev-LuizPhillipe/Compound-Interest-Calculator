@@ -1,5 +1,8 @@
 import React from "react";
 import "./header.css";
+
+//component Header from the application
+
 function Header() {
   return (
     <div className="header-bkg">

@@ -10,7 +10,7 @@ interface InputBoxProps {
   type?: string;
   name?: string;
 }
-
+//component for input box from capture users values
 function InputBox({
   icon,
   placeholder,

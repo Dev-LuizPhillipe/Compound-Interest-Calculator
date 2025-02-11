@@ -13,6 +13,7 @@ function Home() {
     monthlyInvestment: "",
     resultIsVisible: false,
   });
+  //state to store the data of the calculation
   const [data, setData] = useState<
     {
       month: number;
@@ -21,7 +22,7 @@ function Home() {
       totalAccumulated: number;
     }[]
   >([]);
-
+  //function to recieve the values of the inputs and calculate the interest
   const handleCalculateInterest = (
     initialValue: number,
     interestRate: number,
@@ -42,7 +43,7 @@ function Home() {
       accumulated = accumulated * (1 + monthlyRate) + monthlyInvestment;
       totalInvested += monthlyInvestment;
       const interestGained = accumulated - totalInvested;
-
+      //push the values to the array for table
       calculatedData.push({
         month,
         totalInvested: totalInvested,
@@ -80,7 +81,7 @@ function Home() {
       [name]: value === "" ? "" : Number(value),
     }));
   };
-
+  //return page home
   return (
     <div className="containerHome">
       <Header />

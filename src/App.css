@@ -1,9 +1,11 @@
-/* CSS HEX
+/* Colors palette
 --rich-black: #040f0fff;
 --gunmetal: #2d3a3aff;
 --platinum: #d9dcd6ff;
 --jungle-green: #33a075ff;
 --malachite: #32e875ff; */
+
+/* Styles page initial */
 .container {
   display: flex;
   align-items: center;
@@ -29,6 +31,7 @@
   margin-bottom: 60px;
 }
 
+/* Styles page home */
 .containerHome {
   background-color: #d9dcd6;
   display: flex;
