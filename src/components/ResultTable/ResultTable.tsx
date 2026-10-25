@@ -1,4 +1,5 @@
 import React from "react";
+import "./ResultTable.css";
 //component to render the result calculated
 interface TableProps {
   data: {
@@ -9,36 +10,70 @@ interface TableProps {
   }[];
 }
 
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+
 function ResultTable({ data }: TableProps) {
-  const formatCurrency = (value: number) =>
-    value.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+  const last = data[data.length - 1];
 
   return (
-    <div className="table-responsive" style={{ margin: "20px" }}>
-      <table className="table table-striped table-hover table-bordered text-center mt-4 table-dark">
-        <thead>
-          <tr>
-            <th>Meses</th>
-            <th>Total Investido</th>
-            <th>Juros Acumulados</th>
-            <th>Total Acumulado</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, index) => (
-            <tr key={index}>
-              <td>{row.month}</td>
-              <td>{formatCurrency(row.totalInvested)}</td>
-              <td>{formatCurrency(row.accumulatedInterest)}</td>
-              <td>{formatCurrency(row.totalAccumulated)}</td>
+    <section className="result" aria-labelledby="result-title">
+      <h2 id="result-title" className="result-title">
+        Resultado em {last.month} {last.month === 1 ? "mês" : "meses"}
+      </h2>
+
+      <div className="summary">
+        <div className="summary-card">
+          <span className="summary-label">Total investido</span>
+          <span className="summary-value">
+            {currencyFormatter.format(last.totalInvested)}
+          </span>
+        </div>
+        <div className="summary-card">
+          <span className="summary-label">Juros acumulados</span>
+          <span className="summary-value">
+            {currencyFormatter.format(last.accumulatedInterest)}
+          </span>
+        </div>
+        <div className="summary-card summary-card--highlight">
+          <span className="summary-label">Total acumulado</span>
+          <span className="summary-value">
+            {currencyFormatter.format(last.totalAccumulated)}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className="table-wrapper"
+        role="region"
+        aria-label="Evolução mês a mês"
+        tabIndex={0}
+      >
+        <table className="result-table">
+          <caption className="sr-only">Evolução do investimento mês a mês</caption>
+          <thead>
+            <tr>
+              <th scope="col">Mês</th>
+              <th scope="col">Total investido</th>
+              <th scope="col">Juros acumulados</th>
+              <th scope="col">Total acumulado</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {data.map((row) => (
+              <tr key={row.month}>
+                <td>{row.month}</td>
+                <td>{currencyFormatter.format(row.totalInvested)}</td>
+                <td>{currencyFormatter.format(row.accumulatedInterest)}</td>
+                <td>{currencyFormatter.format(row.totalAccumulated)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 }
 

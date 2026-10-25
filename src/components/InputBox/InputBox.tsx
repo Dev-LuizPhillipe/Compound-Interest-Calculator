@@ -1,41 +1,22 @@
 import React from "react";
 import "./InputBox.css";
 
-interface InputBoxProps {
+interface InputBoxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon: string;
-  placeholder: string;
-  value?: any;
-  onChange?: any;
-  onclick?: any;
-  type?: string;
-  name?: string;
+  invalid?: boolean;
 }
 //component for input box from capture users values
-function InputBox({
-  icon,
-  placeholder,
-  value,
-  onChange,
-  onclick,
-  type,
-  name,
-}: InputBoxProps) {
+function InputBox({ icon, invalid, ...inputProps }: InputBoxProps) {
   return (
-    <div className="input-box">
-      <div className="input-box-side">
-        <h1 className="input-icon">{icon}</h1>
-      </div>
-      <form className="form-box">
-        <input
-          type={type}
-          className="input-form"
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          onClick={onclick}
-          name={name}
-        />
-      </form>
+    <div className={invalid ? "input-box input-box--invalid" : "input-box"}>
+      <span className="input-box-side" aria-hidden="true">
+        {icon}
+      </span>
+      <input
+        className="input-form"
+        aria-invalid={invalid || undefined}
+        {...inputProps}
+      />
     </div>
   );
 }

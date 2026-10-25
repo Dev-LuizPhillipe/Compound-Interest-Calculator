@@ -1,16 +1,17 @@
 import React from "react";
 import "./button.css";
 
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+
 //component to render the button
-function Button({ color, backgroundColor, onClick }) {
+function Button({ children, type = "button", className, ...props }: ButtonProps) {
   return (
     <button
-      className="btn"
-      style={{ color: color, backgroundColor: backgroundColor }}
-      onClick={onClick}
-      type="submit"
+      className={className ? `btn ${className}` : "btn"}
+      type={type}
+      {...props}
     >
-      CALCULAR
+      {children}
     </button>
   );
 }

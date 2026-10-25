@@ -1,29 +1,23 @@
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import "./App.css";
-import Button from "./components/ButtonPage/button";
+import "./components/ButtonPage/button.css";
 
 //Initial page
 function App() {
-  //function for navigation
-  const navigate = useNavigate();
-  function NavigationClick() {
-    navigate("/home");
-  }
-
   return (
-    <div className="container">
+    <main className="container">
       <div className="content">
-        <h1 className="title">
-          CALCULADORA DE <br />
-          JUROS COMPOSTOS
-        </h1>
-        <Button
-          color={"#040f0f"}
-          backgroundColor={"#32e875"}
-          onClick={NavigationClick}
-        />
+        <div>
+          <h1 className="title">Calculadora de Juros Compostos</h1>
+          <p className="subtitle">
+            Veja quanto o seu dinheiro rende mês a mês com aportes mensais.
+          </p>
+        </div>
+        <Link to="/home" className="btn">
+          Começar simulação
+        </Link>
       </div>
-    </div>
+    </main>
   );
 }
 

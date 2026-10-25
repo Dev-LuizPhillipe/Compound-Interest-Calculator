@@ -1,148 +1,224 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../components/ButtonPage/button";
 import Header from "../components/Header/header";
 import InputBox from "../components/InputBox/InputBox";
 import ResultTable from "../components/ResultTable/ResultTable";
 
+type FieldName =
+  | "initialValue"
+  | "monthlyInvestment"
+  | "interestRate"
+  | "periodMonths";
+
+type Row = {
+  month: number;
+  totalInvested: number;
+  accumulatedInterest: number;
+  totalAccumulated: number;
+};
+
+const MAX_MONTHS = 600;
+
+//fields rendered in the form, in display order
+const fields: {
+  name: FieldName;
+  label: string;
+  icon: string;
+  placeholder: string;
+  required: boolean;
+}[] = [
+  {
+    name: "initialValue",
+    label: "Valor inicial",
+    icon: "R$",
+    placeholder: "Ex.: 1.000,00",
+    required: true,
+  },
+  {
+    name: "monthlyInvestment",
+    label: "Investimento mensal",
+    icon: "R$",
+    placeholder: "Opcional. Ex.: 200,00",
+    required: false,
+  },
+  {
+    name: "interestRate",
+    label: "Taxa de juros mensal",
+    icon: "%",
+    placeholder: "Ex.: 1,5",
+    required: true,
+  },
+  {
+    name: "periodMonths",
+    label: "Período (meses)",
+    icon: "#",
+    placeholder: "Ex.: 12",
+    required: true,
+  },
+];
+
+//accepts both "1.000,50" (pt-BR) and "1000.50"
+const parseNumber = (raw: string) => {
+  const value = raw.trim();
+  const normalized = value.includes(",")
+    ? value.replace(/\./g, "").replace(",", ".")
+    : value;
+  return Number(normalized);
+};
+
+//function to calculate the interest month by month
+const calculateInterest = (
+  initialValue: number,
+  interestRate: number,
+  monthlyInvestment: number,
+  periodMonths: number,
+): Row[] => {
+  const monthlyRate = interestRate / 100;
+  let accumulated = initialValue;
+  let totalInvested = initialValue;
+  const calculatedData: Row[] = [];
+
+  for (let month = 1; month <= periodMonths; month++) {
+    accumulated = accumulated * (1 + monthlyRate) + monthlyInvestment;
+    totalInvested += monthlyInvestment;
+    calculatedData.push({
+      month,
+      totalInvested,
+      accumulatedInterest: accumulated - totalInvested,
+      totalAccumulated: accumulated,
+    });
+  }
+
+  return calculatedData;
+};
+
+//returns an error message per invalid field
+const validate = (values: Record<FieldName, string>) => {
+  const errors: Partial<Record<FieldName, string>> = {};
+  for (const { name, required } of fields) {
+    const raw = values[name].trim();
+    if (raw === "") {
+      if (required) errors[name] = "Preencha este campo.";
+      continue;
+    }
+    const value = parseNumber(raw);
+    if (!Number.isFinite(value) || value < 0) {
+      errors[name] = "Digite um número maior ou igual a 0.";
+    } else if (
+      name === "periodMonths" &&
+      (!Number.isInteger(value) || value < 1 || value > MAX_MONTHS)
+    ) {
+      errors[name] = `Digite um número inteiro de 1 a ${MAX_MONTHS} meses.`;
+    }
+  }
+  return errors;
+};
+
 function Home() {
   //state to store the values of the inputs
-  const [state, setState] = useState({
+  const [values, setValues] = useState<Record<FieldName, string>>({
     initialValue: "",
+    monthlyInvestment: "",
     interestRate: "",
     periodMonths: "",
-    monthlyInvestment: "",
-    resultIsVisible: false,
   });
+  const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   //state to store the data of the calculation
-  const [data, setData] = useState<
-    {
-      month: number;
-      totalInvested: number;
-      accumulatedInterest: number;
-      totalAccumulated: number;
-    }[]
-  >([]);
-  //function to recieve the values of the inputs and calculate the interest
-  const handleCalculateInterest = (
-    initialValue: number,
-    interestRate: number,
-    monthlyInvestment: number,
-    periodMonths: number
-  ): { data: any[] } => {
-    const monthlyRate = interestRate / 100;
-    let accumulated = initialValue;
-    let totalInvested = initialValue;
-    const calculatedData: {
-      month: number;
-      totalInvested: number;
-      accumulatedInterest: number;
-      totalAccumulated: number;
-    }[] = [];
+  const [data, setData] = useState<Row[]>([]);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-    for (let month = 1; month <= periodMonths; month++) {
-      accumulated = accumulated * (1 + monthlyRate) + monthlyInvestment;
-      totalInvested += monthlyInvestment;
-      const interestGained = accumulated - totalInvested;
-      //push the values to the array for table
-      calculatedData.push({
-        month,
-        totalInvested: totalInvested,
-        accumulatedInterest: interestGained,
-        totalAccumulated: accumulated,
-      });
-    }
+  //bring the result into view after each calculation
+  useEffect(() => {
+    if (data.length === 0) return;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    resultRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [data]);
 
-    return { data: calculatedData };
-  };
-  //function to handle the click event, return the result of calculation
-  const handleClick = () => {
-    const { initialValue, interestRate, periodMonths, monthlyInvestment } =
-      state;
-    if (!initialValue || !interestRate || !periodMonths) {
-      alert("Preencha todos os campos!");
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors = validate(values);
+    setErrors(newErrors);
+
+    const firstInvalid = fields.find(({ name }) => newErrors[name]);
+    if (firstInvalid) {
+      document.getElementById(firstInvalid.name)?.focus();
       return;
     }
-    const { data } = handleCalculateInterest(
-      Number(state.initialValue),
-      Number(state.interestRate),
-      Number(state.monthlyInvestment),
-      Number(state.periodMonths)
+
+    setData(
+      calculateInterest(
+        parseNumber(values.initialValue),
+        parseNumber(values.interestRate),
+        values.monthlyInvestment.trim() === ""
+          ? 0
+          : parseNumber(values.monthlyInvestment),
+        parseNumber(values.periodMonths),
+      ),
     );
-    setData(data);
-    setState((prev) => ({ ...prev, resultIsVisible: true }));
   };
 
-  //function to handle the change event, update the state with the value of the input
-  const handleOnChange = (e) => {
-    const name = e.target.name;
+  //update the value of the input and clear its error
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name as FieldName;
     const value = e.target.value;
-    setState((prev) => ({
-      ...prev,
-      [name]: value === "" ? "" : Number(value),
-    }));
+    setValues((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
-  //return page home
+
   return (
     <div className="containerHome">
       <Header />
-      <div className="contentHome">
-        <div>
-          <h1>Valor Inicial:</h1>
-          <InputBox
-            icon={"R$"}
-            placeholder="Digite o valor inicial"
-            type="number"
-            value={state.initialValue}
-            onChange={handleOnChange}
-            name="initialValue"
-          />
-        </div>
-        <div>
-          <h1>Investimento mensal:</h1>
-          <InputBox
-            icon={"R$"}
-            placeholder="Digite o investimento"
-            type="number"
-            value={state.monthlyInvestment}
-            onChange={handleOnChange}
-            name="monthlyInvestment"
-          />
-        </div>
-        <div>
-          <h1>Taxa de juros:</h1>
-          <InputBox
-            icon={" %"}
-            placeholder="Digite a taxa de juros"
-            type="number"
-            value={state.interestRate}
-            onChange={handleOnChange}
-            name="interestRate"
-          />
-        </div>
-        <div>
-          <h1>Período(Meses):</h1>
-          <InputBox
-            icon={" #"}
-            placeholder="Digite o período"
-            type="number"
-            value={state.periodMonths}
-            onChange={handleOnChange}
-            name="periodMonths"
-          />
-        </div>
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <Button
-          color={"#040f0f"}
-          backgroundColor={"#32e875"}
-          onClick={handleClick}
-        />
-      </div>
-      {state.resultIsVisible && (
-        <>
-          <ResultTable data={data} />
-        </>
-      )}
+      <main className="home-main">
+        <form className="contentHome" onSubmit={handleSubmit} noValidate>
+          <div className="form-grid">
+            {fields.map(({ name, label, icon, placeholder, required }) => (
+              <div className="field" key={name}>
+                <label className="field-label" htmlFor={name}>
+                  {label}
+                </label>
+                <InputBox
+                  id={name}
+                  name={name}
+                  icon={icon}
+                  placeholder={placeholder}
+                  type="text"
+                  inputMode={name === "periodMonths" ? "numeric" : "decimal"}
+                  autoComplete="off"
+                  required={required}
+                  value={values[name]}
+                  onChange={handleOnChange}
+                  invalid={Boolean(errors[name])}
+                  aria-describedby={errors[name] ? `${name}-error` : undefined}
+                />
+                {errors[name] && (
+                  <span id={`${name}-error`} className="field-error">
+                    {errors[name]}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          <Button type="submit">Calcular</Button>
+        </form>
+
+        <p className="sr-only" aria-live="polite">
+          {data.length > 0 &&
+            `Resultado calculado para ${data.length} ${data.length === 1 ? "mês" : "meses"}.`}
+        </p>
+
+        {data.length > 0 && (
+          <div ref={resultRef} className="result-anchor">
+            <ResultTable data={data} />
+          </div>
+        )}
+      </main>
     </div>
   );
 }

@@ -1,20 +1,40 @@
 .btn {
-  height: 60px;
-  width: 150px;
-  font-size: 22px;
-  font-weight: bold;
-  border-radius: 15px;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 32px;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--rich-black);
+  background-color: var(--malachite);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px 0 var(--jungle-green);
+  cursor: pointer;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition:
+    background-color 150ms ease,
+    transform 100ms ease,
+    box-shadow 100ms ease;
 }
 .btn:hover {
-  opacity: 0.9;
+  background-color: var(--jungle-green);
+  box-shadow: 0 3px 0 var(--gunmetal);
+}
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--gunmetal);
+}
+.btn:focus-visible {
+  outline: 3px solid var(--rich-black);
+  outline-offset: 3px;
 }
 @media (max-width: 720px) {
   .btn {
+    width: 100%;
     font-size: 18px;
   }
 }

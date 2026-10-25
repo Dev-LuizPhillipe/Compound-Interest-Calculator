@@ -5,12 +5,18 @@ import "./header.css";
 
 function Header() {
   return (
-    <div className="header-bkg">
+    <header className="header-bkg">
       <div className="img-header">
-        <img src="/icon-progress.png" alt="logo" className="img" />
+        <img
+          src="/icon-progress.png"
+          alt=""
+          width={48}
+          height={48}
+          className="img"
+        />
       </div>
-      <h1 className="title-header">SIMULADOR DE JUROS COMPOSTOS</h1>
-    </div>
+      <h1 className="title-header">Simulador de Juros Compostos</h1>
+    </header>
   );
 }
 export default Header;

@@ -1,38 +1,31 @@
 .header-bkg {
-  background-color: #32e875;
-  width: 100%;
-  height: 10vh;
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: auto;
-  border-radius: 15px 15px 0 0;
+  gap: 16px;
+  width: 100%;
+  min-height: 72px;
+  padding-right: 16px;
+  background-color: var(--malachite);
 }
 
 .img-header {
-  background-color: #33a075;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px 0 0 0;
-  padding: 5px;
+  align-self: stretch;
+  padding: 12px;
+  background-color: var(--jungle-green);
 }
 
 .img {
-  width: 100%;
-  height: 100%;
-  margin: 4px;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .title-header {
-  font-size: 30px;
-  color: #040f0f;
-  font-weight: bold;
-}
-
-@media (max-width: 720px) {
-  .title-header {
-    font-size: 18px;
-  }
+  font-size: clamp(18px, 3vw, 30px);
+  font-weight: 700;
+  color: var(--rich-black);
+  text-wrap: balance;
 }

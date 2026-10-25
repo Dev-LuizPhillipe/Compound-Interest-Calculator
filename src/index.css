@@ -1,12 +1,60 @@
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+/* Colors palette */
+:root {
+  --rich-black: #040f0f;
+  --gunmetal: #2d3a3a;
+  --platinum: #d9dcd6;
+  --jungle-green: #33a075;
+  --malachite: #32e875;
+  --page-bg: #999999;
+  --error: #b42318;
+  color-scheme: light;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
-  font-family: "Quicksand", serif;
-  background-color: #999999;
-  height: 100vh;
+  font-family: "Quicksand", system-ui, sans-serif;
+  background-color: var(--page-bg);
+  color: var(--rich-black);
+  min-height: 100dvh;
   padding: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--rich-black);
+  outline-offset: 2px;
+}
+
+/* visually hidden, still read by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
 }

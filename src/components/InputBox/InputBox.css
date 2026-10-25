@@ -1,61 +1,58 @@
 .input-box {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: #2d3a3a;
+  align-items: stretch;
+  width: 100%;
+  background-color: var(--gunmetal);
+  border: 2px solid transparent;
   border-radius: 10px;
-  width: 200px;
+  transition: border-color 150ms ease;
+}
+.input-box:hover {
+  border-color: var(--jungle-green);
+}
+/* focus ring is drawn on the wrapper so it surrounds the icon too */
+.input-box:focus-within {
+  border-color: var(--malachite);
+  outline: 3px solid var(--rich-black);
+  outline-offset: 2px;
+}
+.input-box--invalid,
+.input-box--invalid:hover {
+  border-color: var(--error);
 }
 
 .input-box-side {
-  background-color: #040f0f;
-  border-radius: 10px;
-  padding: 10px;
-}
-
-.input-icon {
-  color: #d9dcd6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 0 10px;
+  background-color: var(--rich-black);
+  border-radius: 8px;
+  color: var(--platinum);
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.form-box {
-  flex: 1;
-}
 .input-form {
-  width: 100%;
-  height: 100%;
-  background-color: #2d3a3a;
-  padding: 10px;
-  border-radius: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  background-color: transparent;
   border: none;
-  outline: none;
-  color: #d9dcd6;
+  color: var(--platinum);
+  font: inherit;
   font-size: 16px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
-
-input::-webkit-inner-spin-button,
-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.input-form:focus-visible {
+  outline: none;
 }
 
 .input-form::placeholder {
-  color: #d9dcd6;
-  font-size: 12px;
-  font-weight: 300;
-  opacity: 0.5;
-}
-
-@media (max-width: 720px) {
-  .input-box {
-    width: 140px;
-  }
-  .input-form {
-    font-size: 14px;
-  }
-  .input-form::placeholder {
-    font-size: 10px;
-  }
+  color: var(--platinum);
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.7;
 }
